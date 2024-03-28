@@ -4,3 +4,4 @@ PongGame-build
 demo/.godot
 demo/*.import
 demo/bin/PongGame/icons/*.import
+~PongGame.dll
