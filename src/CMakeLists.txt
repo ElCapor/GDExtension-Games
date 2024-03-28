@@ -2,8 +2,8 @@
 
 target_sources( ${PROJECT_NAME}
     PRIVATE
-        PongGame.h
-        PongGame.cpp
+        CoinDashGame.h
+        CoinDashGame.cpp
         GDExtensionTemplate.h
         GDExtensionTemplate.cpp
         RegisterExtension.cpp

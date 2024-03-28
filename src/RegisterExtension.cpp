@@ -7,7 +7,7 @@
 #include "godot_cpp/godot.hpp"
 
 #include "GDExtensionTemplate.h"
-#include "PongGame.h"
+#include "CoinDashGame.h"
 /// @file
 /// Register our classes with Godot.
 
@@ -26,7 +26,9 @@ namespace
         }
 
         godot::ClassDB::register_class<GDExtensionTemplate>();
-        godot::ClassDB::register_class<PongGame>();
+        godot::ClassDB::register_class<Player>();
+        godot::ClassDB::register_class<CoinDashGame>();
+        
     }
 
     /// @brief Called by Godot to let us do any cleanup.
