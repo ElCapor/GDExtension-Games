@@ -1,2 +1,6 @@
 CMakeLists.txt.user
 .vscode/settings.json
+PongGame-build
+demo/.godot
+demo/*.import
+demo/bin/PongGame/icons/*.import

@@ -1,3 +1,27 @@
+# Fork Note :
+## This is an example Pong Game i made using this gdnative template. To build it you can just do the following lines:
+```
+// if you want to just get the binaries
+cmake -B PongGame-build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=PongGame-install PongGame
+// Directly drop the binaries in the demo project to reload and test
+// cmake -B PongGame-build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="demo/bin"-install PongGame
+
+
+cmake --build PongGame-build --config Release
+cmake --install PongGame-build
+```
+
+build.bat is included for convenience.
+
+A demo game can be found in /demo.
+
+What did I do ? : I created a new Control Type called PongGame that is going to be the root node of our game , and it will interact with it's children nodes.
+
+Note : the original project and assets are from https://randommomentania.com/2020/10/godot-pong-tutorial/.
+
+
+Author : ElCapor
+
 [![GitHub](https://img.shields.io/github/license/asmaloney/GDExtensionTemplate)](LICENSE) ![Build](https://github.com/asmaloney/GDExtensionTemplate/actions/workflows/main.yml/badge.svg)
 
 # GDExtensionTemplate

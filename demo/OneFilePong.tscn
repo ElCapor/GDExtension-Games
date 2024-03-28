@@ -1,0 +1,120 @@
+[gd_scene load_steps=6 format=3 uid="uid://bk2r7wugeihyd"]
+
+[ext_resource type="FontFile" uid="uid://c5122vuy1wqtd" path="res://Kenney Future.ttf" id="1"]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(1024, 52)
+
+[sub_resource type="FontFile" id="2"]
+fallbacks = Array[Font]([ExtResource("1")])
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/16/0/kerning_overrides/16/0 = Vector2(0, 0)
+
+[sub_resource type="RectangleShape2D" id="3"]
+size = Vector2(32, 128)
+
+[sub_resource type="RectangleShape2D" id="4"]
+size = Vector2(32, 32)
+
+[node name="OneFilePong" type="PongGame"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 6.0
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0823529, 0.0823529, 0.0823529, 1)
+
+[node name="StaticBody_Top" type="StaticBody2D" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="StaticBody_Top"]
+offset_right = 1024.0
+offset_bottom = 48.0
+color = Color(0.294118, 0.294118, 0.294118, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody_Top"]
+position = Vector2(512, 24)
+shape = SubResource("1")
+
+[node name="StaticBody_Bottom" type="StaticBody2D" parent="."]
+position = Vector2(0, 552)
+
+[node name="ColorRect" type="ColorRect" parent="StaticBody_Bottom"]
+offset_right = 1024.0
+offset_bottom = 48.0
+color = Color(0.294118, 0.294118, 0.294118, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody_Bottom"]
+position = Vector2(512, 24)
+shape = SubResource("1")
+
+[node name="Score_Label" type="Label" parent="."]
+self_modulate = Color(1, 1, 1, 0.705882)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = SubResource("2")
+text = "2 | 1"
+
+[node name="Paddle_Player" type="CharacterBody2D" parent="."]
+position = Vector2(64, 260)
+
+[node name="ColorRect" type="ColorRect" parent="Paddle_Player"]
+offset_left = -16.0
+offset_top = -64.0
+offset_right = 16.0
+offset_bottom = 64.0
+color = Color(0.266667, 1, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paddle_Player"]
+shape = SubResource("3")
+
+[node name="Paddle_AI" type="CharacterBody2D" parent="."]
+position = Vector2(968, 114.002)
+
+[node name="ColorRect" type="ColorRect" parent="Paddle_AI"]
+offset_left = -16.0
+offset_top = -64.0
+offset_right = 16.0
+offset_bottom = 64.0
+color = Color(1, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paddle_AI"]
+shape = SubResource("3")
+
+[node name="Ball" type="CharacterBody2D" parent="."]
+position = Vector2(521.356, 68.8369)
+
+[node name="ColorRect" type="ColorRect" parent="Ball"]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
+shape = SubResource("4")
+
+[node name="Ball_Spawn_Pos" type="Marker2D" parent="."]
+position = Vector2(503, 297)
+
+[node name="AI_Win_Position" type="Marker2D" parent="."]
+position = Vector2(-57, 297)
+
+[node name="Player_Win_Position" type="Marker2D" parent="."]
+position = Vector2(1079, 297)
