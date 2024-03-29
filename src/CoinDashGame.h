@@ -180,25 +180,29 @@ public:
                         godot::Variant &outReturnValue,
                         GDExtensionCallError &outCallError ) const
     {
+        /*
         godot::UtilityFunctions::print("Number of arguments : ", inArgcount);
         for (int i=0; i < inArgcount; i++)
         {
             godot::UtilityFunctions::print("Argument ", i, " : ", inArguments[i]->get_type_name(inArguments[i]->get_type()));
-        }
+        }*/
         godot::Object* obj = inArguments[0]->operator godot::Object *();
         if (obj->is_class("Coin"))
         {
             Coin* target = godot::Object::cast_to<Coin>(obj);
+            CoinDashGame* game = godot::Object::cast_to<CoinDashGame>(godot::Engine::get_singleton()->get_singleton("CoinDashGame"));
+            
             if (target->is_in_group("coins"))
             {
                 godot::UtilityFunctions::print("Hit a coin !");
                 target->Pickup();
-                CoinDashGame* game = godot::Object::cast_to<CoinDashGame>(godot::Engine::get_singleton()->get_singleton("CoinDashGame"));
                 game->player->emit_signal("pickup");
+            } else if (target->is_in_group("obstacles"))
+            {
+                godot::UtilityFunctions::print("Hit an obstacle !");
+                game->player->emit_signal("hurt");
             }
         }
-       
-            
         outCallError.error = GDEXTENSION_CALL_OK;
     }
 };
