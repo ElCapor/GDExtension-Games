@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbb1tfx5d7r0b"]
+
+[ext_resource type="Texture2D" uid="uid://bu6t2xupmsvew" path="res://textures/coin_gold.png" id="1_s5qye"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jdban"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_s5qye")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ydytb"]
+radius = 22.0227
+
+[node name="Coin" type="Coin"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+sprite_frames = SubResource("SpriteFrames_jdban")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ydytb")

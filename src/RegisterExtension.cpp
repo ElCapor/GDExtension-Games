@@ -27,6 +27,7 @@ namespace
 
         godot::ClassDB::register_class<GDExtensionTemplate>();
         godot::ClassDB::register_class<Player>();
+        godot::ClassDB::register_class<Coin>();
         godot::ClassDB::register_class<CoinDashGame>();
         
     }

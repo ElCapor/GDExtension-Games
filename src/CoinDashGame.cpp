@@ -3,16 +3,20 @@
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/classes/input.hpp>
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/resource_preloader.hpp>
 
 // even godot disable this warning in their engine
 // about losing data when converting double to real_t
 #pragma warning( disable : 4244)
 
+/* Player */
 
 Player::Player()
 {
     velocity = godot::Vector2();
     screensize = godot::Vector2(480, 720);
+    area_signal = memnew( SignalCallable );
 }
 
 Player::~Player()
@@ -38,6 +42,8 @@ void Player::_bind_methods()
 
     godot::ClassDB::add_property(get_class_static(), godot::PropertyInfo(godot::Variant::FLOAT, "speed"), "set_string", "get_string");
     */
+   ADD_SIGNAL(godot::MethodInfo("pickup"));
+   ADD_SIGNAL(godot::MethodInfo("hurt"));
 }
 
 void Player::ProcessMovement(double delta)
@@ -65,8 +71,22 @@ void Player::ProcessAnimations(double delta)
     
 };
 
+void Player::Start()
+{
+    set_process(true);
+    set_position(screensize/2);
+    this->sprite->set_animation("idle");
+}
+
+void Player::Die()
+{
+    this->sprite->set_animation("hurt");
+    set_process(false);
+}
+
 void Player::_ready()
 {
+    this->connect( "area_entered", area_signal );
     if (!godot::Engine::get_singleton()->is_editor_hint())
     {
         this->sprite = get_node<godot::AnimatedSprite2D>("AnimatedSprite2D");
@@ -88,6 +108,35 @@ void Player::_process(double delta)
         ProcessAnimations(delta);
     }
 }
+
+/* Coins */
+Coin::Coin()
+{
+
+}
+
+Coin::~Coin()
+{
+
+}
+
+void Coin::Pickup()
+{
+    queue_free();
+}
+void Coin::_bind_methods()
+{
+}
+
+void Coin::_process( double delta )
+{
+}
+
+void Coin::_ready()
+{
+}
+
+/* The Game*/
 CoinDashGame::CoinDashGame()
 {
     // prevent rendering from happening in editor
@@ -102,6 +151,26 @@ CoinDashGame::~CoinDashGame()
     godot::UtilityFunctions::print("Closed Coin Dash");
 }
 
+void CoinDashGame::_ready()
+{
+    if (!godot::Engine::get_singleton()->is_editor_hint())
+    {
+        this->screensize = get_viewport()->get_visible_rect().size;
+        this->player = get_node<Player>("Player");
+        this->game_timer = get_node<godot::Timer>("GameTimer");
+        this->coin_scene = godot::ResourceLoader::get_singleton()->load("res://coin.tscn");
+        if (this->player != nullptr && this->game_timer != nullptr && this->coin_scene.is_valid())
+        {
+            this->is_ready = true;
+            this->player->hide();
+            this->NewGame();
+        }
+        else {
+            godot::UtilityFunctions::print("Failed to get player...");
+        }
+    }
+}
+
 void CoinDashGame::_bind_methods()
 {
     // i didnt add any specific method , but we could add some , if we wanted to interact with the game through
@@ -111,4 +180,31 @@ void CoinDashGame::_bind_methods()
 void CoinDashGame::_notification( int inWhat )
 {
     //godot::UtilityFunctions::print( "Notification: ", godot::String::num( inWhat ) );
+}
+
+void CoinDashGame::SpawnCoins()
+{
+    for (int i = 0 ; i < this->level +4 ; i++)
+    {
+        Coin* coin = Object::cast_to<Coin>(coin_scene->instantiate());
+        this->add_child(coin);
+        coin->screensize = screensize;
+        coin->set_position(
+            godot::Vector2(
+                godot::UtilityFunctions::randi_range(0, screensize.x),
+                godot::UtilityFunctions::randi_range(0, screensize.y)
+            )
+        );
+    }
+}
+void CoinDashGame::NewGame()
+{
+    this->is_playing = true;
+    this->level = 1;
+    this->score = 0;
+    this->time_left = this->play_time;
+    this->player->Start();
+    this->player->show();
+    this->game_timer->start();
+    this->SpawnCoins();
 }
