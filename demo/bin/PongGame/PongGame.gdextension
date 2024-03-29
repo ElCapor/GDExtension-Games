@@ -4,6 +4,9 @@ compatibility_minimum = 4.1
 
 [icons]
 Player = "icons/Player.svg"
+Coin = "icons/Coin.svg"
+CoinDashGame = "icons/CoinDashGame.svg"
+HUD = "icons/HUD.svg"
 
 [libraries]
 linux.release.x86_64 = "lib/Linux-x86_64/libPongGame.so"

@@ -5,6 +5,7 @@
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/resource_preloader.hpp>
+#include <godot_cpp/classes/scene_tree.hpp>
 
 // even godot disable this warning in their engine
 // about losing data when converting double to real_t
@@ -16,7 +17,7 @@ Player::Player()
 {
     velocity = godot::Vector2();
     screensize = godot::Vector2(480, 720);
-    area_signal = memnew( SignalCallable );
+    area_signal = memnew( AreaEnterSignal );
 }
 
 Player::~Player()
@@ -172,6 +173,18 @@ void CoinDashGame::_ready()
     }
 }
 
+void CoinDashGame::_process(double delta)
+{
+    if (this->is_ready && !godot::Engine::get_singleton()->is_editor_hint())
+    {
+        if (is_playing && get_tree()->get_nodes_in_group("coins").size() == 0)
+        {
+            level += 1;
+            time_left += 5;
+            SpawnCoins();
+        }
+    }
+}
 void CoinDashGame::_bind_methods()
 {
     // i didnt add any specific method , but we could add some , if we wanted to interact with the game through
@@ -208,4 +221,62 @@ void CoinDashGame::NewGame()
     this->player->show();
     this->game_timer->start();
     this->SpawnCoins();
+}
+
+HUD::HUD()
+{
+
+}
+
+HUD::~HUD()
+{
+}
+
+void HUD::_ready()
+{
+    if (!godot::Engine::get_singleton()->is_editor_hint())
+    {
+        this->timer = this->get_node<godot::Timer>(("HUD/Timer"));
+
+        if (timer != nullptr)
+        {
+            godot::Engine::get_singleton()->register_singleton("HUD", this);
+            this->is_ready = true;
+        }
+        else {
+            godot::UtilityFunctions::print("Failed to get timer from HUD");
+        }
+    }
+}
+
+void HUD::_bind_methods()
+{
+}
+
+void HUD::_notification( int inWhat )
+{
+}
+
+void HUD::_process( double delta )
+{
+}
+
+void HUD::UpdateScore(int value)
+{
+    godot::Label* txt = get_node<godot::Label>("HUD/MarginContainer/Score");
+    txt->set_text(godot::UtilityFunctions::str(value));
+}
+
+void HUD::UpdateTimer(int value)
+{
+    godot::Label* txt = get_node<godot::Label>("HUD/MarginContainer/Time");
+    txt->set_text(godot::UtilityFunctions::str(value));
+}
+
+void HUD::ShowMessage( godot::String text )
+{
+    godot::Label* txt = get_node<godot::Label>("HUD/Message");
+    txt->set_text(text);
+    txt->show();
+    timer->start();
 }

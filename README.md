@@ -1,5 +1,7 @@
 # Fork Note :
-## This is an example Pong Game i made using this gdnative template. To build it you can just do the following lines:
+## This branch is a game called "coin dash" where you have to get the most coins in less time possible. It features advanced gdextension concepts and i attempt to make it as clean and organized as possible.
+## Note : i kept the project name to PongGme, but you can rename it without any problem or consequences
+### How to build ?
 ```
 // if you want to just get the binaries
 cmake -B PongGame-build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=PongGame-install PongGame
@@ -15,12 +17,17 @@ build.bat is included for convenience.
 
 A demo game can be found in /demo.
 
-What did I do ? : I created a new Control Type called PongGame that is going to be the root node of our game , and it will interact with it's children nodes.
+What did I do ? : I created a new Control Type called DashCoinGame that is going to be the root node of our game , and it will interact with it's children nodes.
 
-Note : the original project and assets are from https://randommomentania.com/2020/10/godot-pong-tutorial/.
+Note : the assets are from kenney.nl , i wrote the project by hand
 
 
 Author : ElCapor
+
+TODO :
+
+- [] SignalCallable class // make it easily inheritable and couple with some macros to make it more usable
+- [] maybe regroup useful stuff in a reusable "framework" code
 
 [![GitHub](https://img.shields.io/github/license/asmaloney/GDExtensionTemplate)](LICENSE) ![Build](https://github.com/asmaloney/GDExtensionTemplate/actions/workflows/main.yml/badge.svg)
 

@@ -17,10 +17,11 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/timer.hpp>
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/canvas_layer.hpp>
 
 #define UNUSED( expr ) (void)( expr )
 
-class SignalCallable;
+class AreaEnterSignal;
 
 class Player : public godot::Area2D
 {
@@ -45,7 +46,7 @@ public:
     void _ready() override;
     
     /*Signals*/
-    SignalCallable* area_signal;
+    AreaEnterSignal* area_signal;
 
     /*Movement*/
     void ProcessMovement(double delta);
@@ -54,7 +55,7 @@ public:
 /*Members & Variables*/
 public:
     bool is_ready = false;
-    float player_speed  = 35.0f;
+    float player_speed  = 150.0f;
     godot::Vector2 velocity;
     godot::Vector2 screensize;
 
@@ -83,7 +84,7 @@ public:
     void _ready() override;
     
     /*Signals*/
-    SignalCallable* area_signal;
+    AreaEnterSignal* area_signal;
 
     
 
@@ -110,6 +111,7 @@ public:
     void _ready() override;
     static void _bind_methods();
     void _notification( int inWhat );
+    void _process(double delta) override;
 
     /*Behaviour*/
     void SpawnCoins(); // spawn coins
@@ -132,13 +134,38 @@ public:
     Player* player;
 };
 
-// base class to create private c++ callables that dont expose to gd
+class HUD : public godot::CanvasLayer
+{
+    GDCLASS(HUD, godot::CanvasLayer);
+public:
+    HUD();
+    ~HUD();
+
+     /*Engine methods*/
+    void _ready() override;
+    static void _bind_methods();
+    void _notification( int inWhat );
+    void _process(double delta) override;
+
+    /*Behaviour*/
+    void UpdateScore(int value);
+    void UpdateTimer(int value);
+    void ShowMessage(godot::String text);
+
+
+/*Members*/
+public:
+    bool is_ready = false;
+/*Components*/
+public:
+    godot::Timer* timer;
+};
+
 class SignalCallable : public godot::CallableCustom
 {
-public:
     virtual uint32_t hash() const
     {
-        return 27;
+        return godot::VariantHasher::hash(this->get_as_text());
     }
 
     virtual godot::String get_as_text() const
@@ -175,6 +202,18 @@ public:
     {
         return godot::ObjectID();
     }
+};
+
+#define SIGNAL_CALLABLE_NAME(signal_name) \
+    virtual godot::String get_as_text() const \
+    { \
+        return "<"#signal_name">"; \
+    } \
+// base class to create private c++ callables that dont expose to gd
+class AreaEnterSignal : public SignalCallable
+{
+public:
+    SIGNAL_CALLABLE_NAME(AreaEnterSignal);
 
     virtual void call( const godot::Variant **inArguments, int inArgcount,
                         godot::Variant &outReturnValue,
@@ -204,5 +243,30 @@ public:
             }
         }
         outCallError.error = GDEXTENSION_CALL_OK;
+    }
+};
+
+class StartGameSignal : public SignalCallable
+{
+SIGNAL_CALLABLE_NAME(StartGameSignal);
+public:
+    virtual void call( const godot::Variant **inArguments, int inArgcount,
+                        godot::Variant &outReturnValue,
+                        GDExtensionCallError &outCallError ) const
+    {
+
+    }
+};
+
+class HUDOnTimerTimeOutSignal : public SignalCallable
+{
+    SIGNAL_CALLABLE_NAME(HUDOnTimerTimeOutSignal);
+    public:
+    virtual void call( const godot::Variant **inArguments, int inArgcount,
+                        godot::Variant &outReturnValue,
+                        GDExtensionCallError &outCallError ) const
+    {
+        // hide messages
+        godot::Object::cast_to<HUD>(godot::Engine::get_singleton()->get_singleton("HUD"))->get_node<godot::Label>("HUD/Message")->hide();
     }
 };
