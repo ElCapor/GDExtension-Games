@@ -16,67 +16,11 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/timer.hpp>
+#include <godot_cpp/classes/engine.hpp>
 
 #define UNUSED( expr ) (void)( expr )
 
-// base class to create private c++ callables that dont expose to gd
-class SignalCallable : public godot::CallableCustom
-{
-public:
-    virtual uint32_t hash() const
-    {
-        return 27;
-    }
-
-    virtual godot::String get_as_text() const
-    {
-        return "<SignalCallable>";
-    }
-
-    static bool compare_equal_func( const CallableCustom *inA, const CallableCustom *inB )
-    {
-        return inA == inB;
-    }
-
-    virtual CompareEqualFunc get_compare_equal_func() const
-    {
-        return &SignalCallable::compare_equal_func;
-    }
-
-    static bool compare_less_func( const CallableCustom *inA, const CallableCustom *inB )
-    {
-        return reinterpret_cast<const void *>( inA ) < reinterpret_cast<const void *>( inB );
-    }
-
-    virtual CompareLessFunc get_compare_less_func() const
-    {
-        return &SignalCallable::compare_less_func;
-    }
-
-    bool is_valid() const
-    {
-        return true;
-    }
-
-    virtual godot::ObjectID get_object() const
-    {
-        return godot::ObjectID();
-    }
-
-    virtual void call( const godot::Variant **inArguments, int inArgcount,
-                        godot::Variant &outReturnValue,
-                        GDExtensionCallError &outCallError ) const
-    {
-        godot::UtilityFunctions::print("Number of arguments : ", inArgcount);
-        for (int i=0; i < inArgcount; i++)
-        {
-            godot::UtilityFunctions::print("Argument ", i, " : ", inArguments[i]->get_type_name(inArguments[i]->get_type()));
-        }
-
-        outReturnValue = "Hi";
-        outCallError.error = GDEXTENSION_CALL_OK;
-    }
-};
+class SignalCallable;
 
 class Player : public godot::Area2D
 {
@@ -186,4 +130,75 @@ public:
     godot::Ref<godot::PackedScene> coin_scene;
     godot::Timer* game_timer;
     Player* player;
+};
+
+// base class to create private c++ callables that dont expose to gd
+class SignalCallable : public godot::CallableCustom
+{
+public:
+    virtual uint32_t hash() const
+    {
+        return 27;
+    }
+
+    virtual godot::String get_as_text() const
+    {
+        return "<SignalCallable>";
+    }
+
+    static bool compare_equal_func( const CallableCustom *inA, const CallableCustom *inB )
+    {
+        return inA == inB;
+    }
+
+    virtual CompareEqualFunc get_compare_equal_func() const
+    {
+        return &SignalCallable::compare_equal_func;
+    }
+
+    static bool compare_less_func( const CallableCustom *inA, const CallableCustom *inB )
+    {
+        return reinterpret_cast<const void *>( inA ) < reinterpret_cast<const void *>( inB );
+    }
+
+    virtual CompareLessFunc get_compare_less_func() const
+    {
+        return &SignalCallable::compare_less_func;
+    }
+
+    bool is_valid() const
+    {
+        return true;
+    }
+
+    virtual godot::ObjectID get_object() const
+    {
+        return godot::ObjectID();
+    }
+
+    virtual void call( const godot::Variant **inArguments, int inArgcount,
+                        godot::Variant &outReturnValue,
+                        GDExtensionCallError &outCallError ) const
+    {
+        godot::UtilityFunctions::print("Number of arguments : ", inArgcount);
+        for (int i=0; i < inArgcount; i++)
+        {
+            godot::UtilityFunctions::print("Argument ", i, " : ", inArguments[i]->get_type_name(inArguments[i]->get_type()));
+        }
+        godot::Object* obj = inArguments[0]->operator godot::Object *();
+        if (obj->is_class("Coin"))
+        {
+            Coin* target = godot::Object::cast_to<Coin>(obj);
+            if (target->is_in_group("coins"))
+            {
+                godot::UtilityFunctions::print("Hit a coin !");
+                target->Pickup();
+                CoinDashGame* game = godot::Object::cast_to<CoinDashGame>(godot::Engine::get_singleton()->get_singleton("CoinDashGame"));
+                game->player->emit_signal("pickup");
+            }
+        }
+       
+            
+        outCallError.error = GDEXTENSION_CALL_OK;
+    }
 };

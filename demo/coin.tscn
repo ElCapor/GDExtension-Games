@@ -16,7 +16,7 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_ydytb"]
 radius = 22.0227
 
-[node name="Coin" type="Coin"]
+[node name="Coin" type="Coin" groups=["coins"]]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.25, 0.25)

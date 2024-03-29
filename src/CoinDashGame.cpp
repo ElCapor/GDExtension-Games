@@ -139,6 +139,7 @@ void Coin::_ready()
 /* The Game*/
 CoinDashGame::CoinDashGame()
 {
+    godot::Engine::get_singleton()->register_singleton("CoinDashGame", this);
     // prevent rendering from happening in editor
     if (!godot::Engine::get_singleton()->is_editor_hint())
         godot::UtilityFunctions::print("Started Coin Dash in Editor // reloaded");
