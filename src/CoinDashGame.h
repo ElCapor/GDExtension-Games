@@ -46,8 +46,7 @@ public:
     void _ready() override;
     
     /*Signals*/
-    AreaEnterSignal* area_signal;
-
+    void area_entered_callback(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
     /*Movement*/
     void ProcessMovement(double delta);
     void ProcessAnimations(double delta);
@@ -161,112 +160,5 @@ public:
     godot::Timer* timer;
 };
 
-class SignalCallable : public godot::CallableCustom
-{
-    virtual uint32_t hash() const
-    {
-        return godot::VariantHasher::hash(this->get_as_text());
-    }
 
-    virtual godot::String get_as_text() const
-    {
-        return "<SignalCallable>";
-    }
 
-    static bool compare_equal_func( const CallableCustom *inA, const CallableCustom *inB )
-    {
-        return inA == inB;
-    }
-
-    virtual CompareEqualFunc get_compare_equal_func() const
-    {
-        return &SignalCallable::compare_equal_func;
-    }
-
-    static bool compare_less_func( const CallableCustom *inA, const CallableCustom *inB )
-    {
-        return reinterpret_cast<const void *>( inA ) < reinterpret_cast<const void *>( inB );
-    }
-
-    virtual CompareLessFunc get_compare_less_func() const
-    {
-        return &SignalCallable::compare_less_func;
-    }
-
-    bool is_valid() const
-    {
-        return true;
-    }
-
-    virtual godot::ObjectID get_object() const
-    {
-        return godot::ObjectID();
-    }
-};
-
-#define SIGNAL_CALLABLE_NAME(signal_name) \
-    virtual godot::String get_as_text() const \
-    { \
-        return "<"#signal_name">"; \
-    } \
-// base class to create private c++ callables that dont expose to gd
-class AreaEnterSignal : public SignalCallable
-{
-public:
-    SIGNAL_CALLABLE_NAME(AreaEnterSignal);
-
-    virtual void call( const godot::Variant **inArguments, int inArgcount,
-                        godot::Variant &outReturnValue,
-                        GDExtensionCallError &outCallError ) const
-    {
-        /*
-        godot::UtilityFunctions::print("Number of arguments : ", inArgcount);
-        for (int i=0; i < inArgcount; i++)
-        {
-            godot::UtilityFunctions::print("Argument ", i, " : ", inArguments[i]->get_type_name(inArguments[i]->get_type()));
-        }*/
-        godot::Object* obj = inArguments[0]->operator godot::Object *();
-        if (obj->is_class("Coin"))
-        {
-            Coin* target = godot::Object::cast_to<Coin>(obj);
-            CoinDashGame* game = godot::Object::cast_to<CoinDashGame>(godot::Engine::get_singleton()->get_singleton("CoinDashGame"));
-            
-            if (target->is_in_group("coins"))
-            {
-                godot::UtilityFunctions::print("Hit a coin !");
-                target->Pickup();
-                game->player->emit_signal("pickup");
-            } else if (target->is_in_group("obstacles"))
-            {
-                godot::UtilityFunctions::print("Hit an obstacle !");
-                game->player->emit_signal("hurt");
-            }
-        }
-        outCallError.error = GDEXTENSION_CALL_OK;
-    }
-};
-
-class StartGameSignal : public SignalCallable
-{
-SIGNAL_CALLABLE_NAME(StartGameSignal);
-public:
-    virtual void call( const godot::Variant **inArguments, int inArgcount,
-                        godot::Variant &outReturnValue,
-                        GDExtensionCallError &outCallError ) const
-    {
-
-    }
-};
-
-class HUDOnTimerTimeOutSignal : public SignalCallable
-{
-    SIGNAL_CALLABLE_NAME(HUDOnTimerTimeOutSignal);
-    public:
-    virtual void call( const godot::Variant **inArguments, int inArgcount,
-                        godot::Variant &outReturnValue,
-                        GDExtensionCallError &outCallError ) const
-    {
-        // hide messages
-        godot::Object::cast_to<HUD>(godot::Engine::get_singleton()->get_singleton("HUD"))->get_node<godot::Label>("HUD/Message")->hide();
-    }
-};

@@ -1,4 +1,12 @@
+/*
+USER INCLUDES
+*/
 #include "CoinDashGame.h"
+#include "SignalSystem.h"
+
+/*
+GODOT INCLUDES
+*/
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/core/math.hpp>
 #include <godot_cpp/classes/input.hpp>
@@ -6,6 +14,7 @@
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/resource_preloader.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
+
 
 // even godot disable this warning in their engine
 // about losing data when converting double to real_t
@@ -17,7 +26,6 @@ Player::Player()
 {
     velocity = godot::Vector2();
     screensize = godot::Vector2(480, 720);
-    area_signal = memnew( AreaEnterSignal );
 }
 
 Player::~Player()
@@ -85,9 +93,42 @@ void Player::Die()
     set_process(false);
 }
 
+
+
+void Player::area_entered_callback(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError)
+{
+    godot::Object* obj = inArguments[0]->operator godot::Object *();
+    if (obj->is_class("Coin"))
+    {
+        Coin* target = godot::Object::cast_to<Coin>(obj);
+        //CoinDashGame* game = godot::Object::cast_to<CoinDashGame>(godot::Engine::get_singleton()->get_singleton("CoinDashGame"));
+        
+        if (target->is_in_group("coins"))
+        {
+            godot::UtilityFunctions::print("Hit a coin !");
+            target->Pickup();
+            this->emit_signal("pickup");
+        } else if (target->is_in_group("obstacles"))
+        {
+            godot::UtilityFunctions::print("Hit an obstacle !");
+            this->emit_signal("hurt");
+        }
+    }
+    outCallError.error = GDEXTENSION_CALL_OK;
+}
+
 void Player::_ready()
 {
-    this->connect( "area_entered", area_signal );
+    /*
+    Callback connect test
+    CallbackSignalConnector connector2;
+    connector2.connect(this, "area_entered", [](const godot::Variant** inArguments, int argCount, godot::Variant& args_out, GDExtensionCallError& error){
+        godot::UtilityFunctions::print("Connected fr");
+    });
+    */
+    
+    SignalConnector<Player> connector(this);
+    connector.connect(this, "area_entered", &Player::area_entered_callback);
     if (!godot::Engine::get_singleton()->is_editor_hint())
     {
         this->sprite = get_node<godot::AnimatedSprite2D>("AnimatedSprite2D");
