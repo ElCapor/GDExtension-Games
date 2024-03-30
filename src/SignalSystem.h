@@ -103,7 +103,14 @@ public:
 
     SignalConnector(T* object) : m_object(object) {}
 
+    // connect to signal of a node
     void connect(godot::Node* node, const godot::String& signal, SignalCallback callback) {
+        node->connect(signal, make_callable(callback));
+    };
+
+    // connect to a signal of a godot::Ref
+    template <typename refType>
+    void connect(godot::Ref<refType> node, const godot::String& signal, SignalCallback callback) {
         node->connect(signal, make_callable(callback));
     };
 

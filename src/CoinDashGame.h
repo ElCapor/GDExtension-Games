@@ -83,7 +83,7 @@ public:
     void _ready() override;
     
     /*Signals*/
-    AreaEnterSignal* area_signal;
+    void TweenEnd(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
 
     
 
