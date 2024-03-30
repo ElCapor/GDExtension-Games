@@ -1,0 +1,65 @@
+[gd_scene load_steps=13 format=3 uid="uid://cd63tj71ccj6s"]
+
+[ext_resource type="Texture2D" uid="uid://bogc5yrof7xns" path="res://textures/pow/pow-frame-1.png" id="1_gjcd0"]
+[ext_resource type="Texture2D" uid="uid://bfgprhnu2h1oy" path="res://textures/pow/pow-frame-2.png" id="2_nad8u"]
+[ext_resource type="Texture2D" uid="uid://daqwqrj7gk6kt" path="res://textures/pow/pow-frame-3.png" id="3_pxk4n"]
+[ext_resource type="Texture2D" uid="uid://ygcfnh8urcsm" path="res://textures/pow/pow-frame-4.png" id="4_253av"]
+[ext_resource type="Texture2D" uid="uid://clp6570mv8tmf" path="res://textures/pow/pow-frame-5.png" id="5_igsp7"]
+[ext_resource type="Texture2D" uid="uid://yfpxtli356bk" path="res://textures/pow/pow-frame-6.png" id="6_u1yn4"]
+[ext_resource type="Texture2D" uid="uid://1sahuomgesgy" path="res://textures/pow/pow-frame-7.png" id="7_73lhl"]
+[ext_resource type="Texture2D" uid="uid://c3xkcaid0yqt4" path="res://textures/pow/pow-frame-8.png" id="8_em0a1"]
+[ext_resource type="Texture2D" uid="uid://cs2n53jninh25" path="res://textures/pow/pow-frame-9.png" id="9_7vl7i"]
+[ext_resource type="Texture2D" uid="uid://dfv7fp8gw862v" path="res://textures/pow/pow-frame-10.png" id="10_3gbtm"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jdban"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_gjcd0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_nad8u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_pxk4n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_253av")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_igsp7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_u1yn4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_73lhl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_em0a1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_7vl7i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_3gbtm")
+}],
+"loop": true,
+"name": &"default",
+"speed": 7.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ydytb"]
+radius = 12.1655
+
+[node name="Powerup" type="Coin" groups=["powerups"]]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+sprite_frames = SubResource("SpriteFrames_jdban")
+frame_progress = 0.648908
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ydytb")
+
+[node name="Timer" type="Timer" parent="."]
