@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Unlicense
-add_subdirectory("classes/src")
+add_subdirectory("classes")
 
 target_sources( ${PROJECT_NAME}
     PRIVATE
@@ -12,5 +12,4 @@ target_sources( ${PROJECT_NAME}
 target_include_directories( ${PROJECT_NAME}
     PRIVATE
         "src"
-        "classes/include"
 )
