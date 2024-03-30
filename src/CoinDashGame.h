@@ -96,6 +96,38 @@ public:
 public:
     godot::AnimatedSprite2D* sprite;
 };
+
+class HUD : public godot::CanvasLayer
+{
+    GDCLASS(HUD, godot::CanvasLayer);
+public:
+    HUD();
+    ~HUD();
+
+     /*Engine methods*/
+    void _ready() override;
+    static void _bind_methods();
+    void ConnectSignals();
+    void _notification( int inWhat );
+    void _process(double delta) override;
+
+    /*Behaviour*/
+    void UpdateScore(int value);
+    void UpdateTimer(int value);
+    void ShowMessage(godot::String text);
+
+    /*Signals*/
+    void StartButtonPressed(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
+    void StartGameEvent(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
+
+/*Members*/
+public:
+    bool is_ready = false;
+/*Components*/
+public:
+    godot::Timer* timer;
+};
+
 class CoinDashGame : public godot::Node
 {
     GDCLASS(CoinDashGame, godot::Node)
@@ -109,12 +141,21 @@ public:
     /*Engine methods*/
     void _ready() override;
     static void _bind_methods();
+    void ConnectSignals();
     void _notification( int inWhat );
     void _process(double delta) override;
 
     /*Behaviour*/
     void SpawnCoins(); // spawn coins
     void NewGame(); // start a new game
+    void GameOver(); // the game is finished
+
+    /*Signals*/
+    void onGameTimerTimeout(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
+    void OnPlayerHurt(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
+    void OnPlayerPickup(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
+    void OnStartGame(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
+
 
 /*Variables*/
 public:
@@ -132,33 +173,4 @@ public:
     godot::Timer* game_timer;
     Player* player;
 };
-
-class HUD : public godot::CanvasLayer
-{
-    GDCLASS(HUD, godot::CanvasLayer);
-public:
-    HUD();
-    ~HUD();
-
-     /*Engine methods*/
-    void _ready() override;
-    static void _bind_methods();
-    void _notification( int inWhat );
-    void _process(double delta) override;
-
-    /*Behaviour*/
-    void UpdateScore(int value);
-    void UpdateTimer(int value);
-    void ShowMessage(godot::String text);
-
-
-/*Members*/
-public:
-    bool is_ready = false;
-/*Components*/
-public:
-    godot::Timer* timer;
-};
-
-
 

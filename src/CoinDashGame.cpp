@@ -14,14 +14,18 @@ GODOT INCLUDES
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/resource_preloader.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
+#include <godot_cpp/classes/button.hpp>
 
 
 // even godot disable this warning in their engine
 // about losing data when converting double to real_t
 #pragma warning( disable : 4244)
 
-/* Player */
 
+/*Macros*/
+#define dbg(...) godot::UtilityFunctions::print(__VA_ARGS__)
+
+/* Player */
 Player::Player()
 {
     velocity = godot::Vector2();
@@ -205,8 +209,9 @@ void CoinDashGame::_ready()
         if (this->player != nullptr && this->game_timer != nullptr && this->coin_scene.is_valid())
         {
             this->is_ready = true;
+            this->ConnectSignals();
             this->player->hide();
-            this->NewGame();
+            //this->NewGame();
         }
         else {
             godot::UtilityFunctions::print("Failed to get player...");
@@ -230,6 +235,16 @@ void CoinDashGame::_bind_methods()
 {
     // i didnt add any specific method , but we could add some , if we wanted to interact with the game through
     // the main menu for example
+}
+
+void CoinDashGame::ConnectSignals()
+{
+    SignalConnector<CoinDashGame> connector(this);
+    connector.connect(get_node<Player>("Player"), "pickup", &CoinDashGame::OnPlayerPickup);
+    connector.connect(get_node<Player>("Player"), "hurt", &CoinDashGame::OnPlayerHurt);
+    connector.connect(get_node<godot::Timer>("GameTimer"), "timeout", &CoinDashGame::onGameTimerTimeout);
+    connector.connect(get_node<HUD>("HUD"), "start_game", &CoinDashGame::OnStartGame);
+
 }
 
 void CoinDashGame::_notification( int inWhat )
@@ -262,6 +277,65 @@ void CoinDashGame::NewGame()
     this->player->show();
     this->game_timer->start();
     this->SpawnCoins();
+    get_node<HUD>("HUD")->UpdateScore(score);
+    get_node<HUD>("HUD")->UpdateTimer(time_left);
+
+}
+
+void CoinDashGame::GameOver()
+{
+    this->is_playing = false;
+    this->game_timer->stop();
+    get_tree()->call_group("coins", "queue_free");
+    get_node<HUD>("HUD")->ShowMessage("Game Over");
+    this->player->Die();
+
+}
+
+void CoinDashGame::onGameTimerTimeout(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError)
+{
+    UNUSED(inArguments);
+    UNUSED(inArgcount);
+
+    this->time_left -= 1;
+    get_node<HUD>("HUD")->UpdateTimer(time_left);
+    if (time_left < 0)
+        this->GameOver();
+        
+    outCallError.error = GDEXTENSION_CALL_OK;
+}
+
+void CoinDashGame::OnPlayerHurt(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError)
+{
+    UNUSED(inArguments);
+    UNUSED(inArgcount);
+
+    GameOver();
+
+    outCallError.error = GDEXTENSION_CALL_OK;
+}
+
+void CoinDashGame::OnPlayerPickup(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError)
+{
+    UNUSED(inArguments);
+    UNUSED(inArgcount);
+    
+    score += 1;
+    get_node<HUD>("HUD")->UpdateScore(score);
+
+    outCallError.error = GDEXTENSION_CALL_OK;
+}
+
+void CoinDashGame::OnStartGame( const godot::Variant **inArguments, int inArgcount,
+                                godot::Variant &outReturnValue, GDExtensionCallError &outCallError )
+{
+    UNUSED(inArguments);
+    UNUSED(inArgcount);
+
+    get_node<HUD>("HUD")->StartGameEvent(inArguments, inArgcount, outReturnValue, outCallError);
+    this->NewGame();
+
+    outCallError.error = GDEXTENSION_CALL_OK;
 }
 
 HUD::HUD()
@@ -277,11 +351,11 @@ void HUD::_ready()
 {
     if (!godot::Engine::get_singleton()->is_editor_hint())
     {
-        this->timer = this->get_node<godot::Timer>(("HUD/Timer"));
+        this->timer = this->get_node<godot::Timer>(("Timer"));
 
         if (timer != nullptr)
         {
-            godot::Engine::get_singleton()->register_singleton("HUD", this);
+            this->ConnectSignals();
             this->is_ready = true;
         }
         else {
@@ -292,6 +366,13 @@ void HUD::_ready()
 
 void HUD::_bind_methods()
 {
+    ADD_SIGNAL(godot::MethodInfo("start_game"));
+}
+
+void HUD::ConnectSignals()
+{
+    SignalConnector<HUD> connector(this);
+    connector.connect(get_node<godot::Button>("StartButton"), "pressed", &HUD::StartButtonPressed);
 }
 
 void HUD::_notification( int inWhat )
@@ -304,20 +385,43 @@ void HUD::_process( double delta )
 
 void HUD::UpdateScore(int value)
 {
-    godot::Label* txt = get_node<godot::Label>("HUD/MarginContainer/Score");
+    godot::Label* txt = get_node<godot::Label>("MarginContainer/Score");
     txt->set_text(godot::UtilityFunctions::str(value));
 }
 
 void HUD::UpdateTimer(int value)
 {
-    godot::Label* txt = get_node<godot::Label>("HUD/MarginContainer/Time");
+    godot::Label* txt = get_node<godot::Label>("MarginContainer/Time");
     txt->set_text(godot::UtilityFunctions::str(value));
 }
 
 void HUD::ShowMessage( godot::String text )
 {
-    godot::Label* txt = get_node<godot::Label>("HUD/Message");
+    godot::Label* txt = get_node<godot::Label>("Message");
     txt->set_text(text);
     txt->show();
     timer->start();
+}
+
+void HUD::StartButtonPressed( const godot::Variant **inArguments, int inArgcount,
+                        godot::Variant &outReturnValue, GDExtensionCallError &outCallError )
+{
+    UNUSED(inArguments);
+    UNUSED(inArgcount);
+
+    this->emit_signal("start_game");
+
+    outCallError.error = GDEXTENSION_CALL_OK;
+}
+
+void HUD::StartGameEvent( const godot::Variant **inArguments, int inArgcount,
+                          godot::Variant &outReturnValue, GDExtensionCallError &outCallError )
+{
+    UNUSED(inArguments);
+    UNUSED(inArgcount);
+
+    get_node<godot::Label>("Message")->hide();
+    get_node<godot::Button>("StartButton")->hide();
+
+    outCallError.error = GDEXTENSION_CALL_OK;
 }

@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bk2r7wugeihyd"]
+[gd_scene load_steps=4 format=3 uid="uid://bk2r7wugeihyd"]
 
 [ext_resource type="Texture2D" uid="uid://dyy5alr4r37o5" path="res://textures/bg.png" id="1_pj6k4"]
 [ext_resource type="PackedScene" uid="uid://dqnhpfd5qsk85" path="res://player.tscn" id="2_htgai"]
+[ext_resource type="PackedScene" uid="uid://btfnfeljbx51g" path="res://hud.tscn" id="3_0spt6"]
 
 [node name="CoinDashGame" type="CoinDashGame"]
 
@@ -17,3 +18,5 @@ stretch_mode = 1
 [node name="Player" parent="." instance=ExtResource("2_htgai")]
 
 [node name="GameTimer" type="Timer" parent="."]
+
+[node name="HUD" parent="." instance=ExtResource("3_0spt6")]

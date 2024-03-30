@@ -28,7 +28,7 @@ TODO :
 
 - [] SignalCallable class // make it easily inheritable and couple with some macros to make it more usable
 - [] maybe regroup useful stuff in a reusable "framework" code
-
+- [] move hideable ui components into a group
 [![GitHub](https://img.shields.io/github/license/asmaloney/GDExtensionTemplate)](LICENSE) ![Build](https://github.com/asmaloney/GDExtensionTemplate/actions/workflows/main.yml/badge.svg)
 
 # GDExtensionTemplate
