@@ -10,6 +10,7 @@
 #include "classes/include/CoinDashGame.h"
 #include "classes/include/Coin.hpp"
 #include "classes/include/HUD.hpp"
+#include "classes/include/Powerup.hpp"
 
 
 /// @file
@@ -34,6 +35,7 @@ namespace
         godot::ClassDB::register_class<Coin>();
         godot::ClassDB::register_class<CoinDashGame>();
         godot::ClassDB::register_class<HUD>();
+        godot::ClassDB::register_class<Powerup>();
         
     }
 

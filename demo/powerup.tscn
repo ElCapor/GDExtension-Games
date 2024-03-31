@@ -52,7 +52,7 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_ydytb"]
 radius = 12.1655
 
-[node name="Powerup" type="Coin" groups=["powerups"]]
+[node name="Powerup" type="Powerup" groups=["powerups"]]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
@@ -63,3 +63,5 @@ frame_progress = 0.648908
 shape = SubResource("CircleShape2D_ydytb")
 
 [node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true

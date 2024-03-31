@@ -1,6 +1,7 @@
 #include "SignalSystem.h"
 #include "Player.hpp"
 #include "Coin.hpp"
+#include "Powerup.hpp"
 
 /* Player */
 Player::Player()
@@ -79,16 +80,24 @@ void Player::Die()
 void Player::area_entered_callback(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError)
 {
     godot::Object* obj = inArguments[0]->operator godot::Object *();
-    if (obj->is_class("Coin"))
+    if (obj->is_class("Area2D"))
     {
-        Coin* target = godot::Object::cast_to<Coin>(obj);
+        godot::Area2D* target = Object::cast_to<godot::Area2D>(obj);
         //CoinDashGame* game = godot::Object::cast_to<CoinDashGame>(godot::Engine::get_singleton()->get_singleton("CoinDashGame"));
-        
         if (target->is_in_group("coins"))
         {
+            Coin* c = godot::Object::cast_to<Coin>(obj);
             godot::UtilityFunctions::print("Hit a coin !");
-            target->Pickup();
+            c->Pickup();
             this->emit_signal("pickup");
+
+        } else if (target->is_in_group("powerups")) {
+            godot::UtilityFunctions::print("Power me up !");
+            Powerup* p = godot::Object::cast_to<Powerup>(obj);
+            godot::UtilityFunctions::print("Hit a coin !");
+            p->Pickup();
+            this->emit_signal("pickup");
+            
         } else if (target->is_in_group("obstacles"))
         {
             godot::UtilityFunctions::print("Hit an obstacle !");

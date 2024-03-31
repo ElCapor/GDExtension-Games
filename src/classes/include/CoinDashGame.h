@@ -27,6 +27,7 @@ public:
 
     /*Signals*/
     void onGameTimerTimeout(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
+    void onPowerupTimerTimeout(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
     void OnPlayerHurt(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
     void OnPlayerPickup(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
     void OnStartGame(const godot::Variant** inArguments, int inArgcount, godot::Variant& outReturnValue, GDExtensionCallError& outCallError);
@@ -45,6 +46,7 @@ public:
 /*Components*/
 public:
     godot::Ref<godot::PackedScene> coin_scene;
+    godot::Ref<godot::PackedScene> powerup_scene;
     godot::Timer* game_timer;
     Player* player;
 };

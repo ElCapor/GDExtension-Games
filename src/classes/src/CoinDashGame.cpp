@@ -6,6 +6,7 @@ USER INCLUDES
 #include "Player.hpp"
 #include "Coin.hpp"
 #include "HUD.hpp"
+#include "Powerup.hpp"
 
 /*
 GODOT INCLUDES
@@ -27,7 +28,7 @@ GODOT INCLUDES
 #define dbg(...) godot::UtilityFunctions::print(__VA_ARGS__)
 
 
-
+#include "assert.hpp"
 
 /* The Game*/
 CoinDashGame::CoinDashGame()
@@ -38,6 +39,7 @@ CoinDashGame::CoinDashGame()
         godot::UtilityFunctions::print("Started Coin Dash in Editor // reloaded");
     else
         godot::UtilityFunctions::print("Started Coin Dash");
+    
 }
 
 CoinDashGame::~CoinDashGame()
@@ -53,7 +55,8 @@ void CoinDashGame::_ready()
         this->player = get_node<Player>("Player");
         this->game_timer = get_node<godot::Timer>("GameTimer");
         this->coin_scene = godot::ResourceLoader::get_singleton()->load("res://coin.tscn");
-        if (this->player != nullptr && this->game_timer != nullptr && this->coin_scene.is_valid())
+        this->powerup_scene = godot::ResourceLoader::get_singleton()->load("res://powerup.tscn");
+        if (this->player != nullptr && this->game_timer != nullptr && this->coin_scene.is_valid() && this->powerup_scene.is_valid())
         {
             this->is_ready = true;
             this->ConnectSignals();
@@ -91,6 +94,7 @@ void CoinDashGame::ConnectSignals()
     connector.connect(get_node<Player>("Player"), "hurt", &CoinDashGame::OnPlayerHurt);
     connector.connect(get_node<godot::Timer>("GameTimer"), "timeout", &CoinDashGame::onGameTimerTimeout);
     connector.connect(get_node<HUD>("HUD"), "start_game", &CoinDashGame::OnStartGame);
+    connector.connect(get_node<godot::Timer>("PowerupTimer"), "timeout", &CoinDashGame::onPowerupTimerTimeout);
 
 }
 
@@ -159,6 +163,25 @@ void CoinDashGame::OnPlayerHurt(const godot::Variant** inArguments, int inArgcou
 
     GameOver();
 
+    outCallError.error = GDEXTENSION_CALL_OK;
+}
+
+void CoinDashGame::onPowerupTimerTimeout( const godot::Variant **inArguments, int inArgcount,
+                       godot::Variant &outReturnValue, GDExtensionCallError &outCallError )
+{
+    UNUSED(inArguments);
+    UNUSED(inArgcount);
+    dbg("Gay timeout");
+    Powerup* p = godot::Object::cast_to<Powerup>(powerup_scene->instantiate());
+    add_child(p);
+    p->screensize = screensize;
+    p->set_position(
+        godot::Vector2(
+            godot::UtilityFunctions::randi_range(0, screensize.x),
+            godot::UtilityFunctions::randi_range(0, screensize.y)
+        )
+    );
+    
     outCallError.error = GDEXTENSION_CALL_OK;
 }
 

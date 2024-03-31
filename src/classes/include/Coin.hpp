@@ -1,3 +1,6 @@
+#ifndef COIN_HPP
+#define COIN_HPP
+
 #include "Include.hpp"
 
 class Coin : public godot::Area2D
@@ -34,3 +37,5 @@ public:
 public:
     godot::AnimatedSprite2D* sprite;
 };
+
+#endif

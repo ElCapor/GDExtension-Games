@@ -19,7 +19,7 @@ Coin::~Coin()
 
 void Coin::TweenProps()
 {
-     get_node<godot::CollisionShape2D>("CollisionShape2D")->set_deferred("disabled", true);
+    get_node<godot::CollisionShape2D>("CollisionShape2D")->set_deferred("disabled", true);
     auto tw = create_tween()->set_parallel()->set_trans(godot::Tween::TRANS_QUAD);
     tw->tween_property(this, "scale", get_scale()*3, 0.3);
     tw->tween_property(this, "modulate:a", 0.0, 0.3);

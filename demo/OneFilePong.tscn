@@ -20,3 +20,8 @@ stretch_mode = 1
 [node name="GameTimer" type="Timer" parent="."]
 
 [node name="HUD" parent="." instance=ExtResource("3_0spt6")]
+
+[node name="PowerupTimer" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
+autostart = true
