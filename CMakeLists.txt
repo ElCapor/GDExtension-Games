@@ -34,12 +34,16 @@ project( PongGame
         0.1.0
 )
 
+
 # Create our library
 add_library( ${PROJECT_NAME} SHARED )
 
+
+
 target_compile_features( ${PROJECT_NAME}
     PRIVATE
-        cxx_std_17
+        cxx_std_20
+        
 )
 
 # LIB_ARCH is the architecture being built. It is set to the build system's architecture.

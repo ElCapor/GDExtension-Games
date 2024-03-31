@@ -39,7 +39,7 @@ CoinDashGame::CoinDashGame()
         godot::UtilityFunctions::print("Started Coin Dash in Editor // reloaded");
     else
         godot::UtilityFunctions::print("Started Coin Dash");
-    
+    //
 }
 
 CoinDashGame::~CoinDashGame()

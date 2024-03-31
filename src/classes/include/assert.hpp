@@ -11,7 +11,7 @@
 #define assertion(condition, message)                                             \
     do                                                                            \
     {                                                                             \
-        if (!(condition)) [[unlikely]]                                            \
+        if constexpr(!(condition)) [[unlikely]]                                            \
         {                                                                         \
             ::godot::_err_print_error(__FUNCTION__, __FILE__, __LINE__,           \
                                     message " => condition: (" #condition ")"); \

@@ -1,2 +1,2 @@
-cmake --build PongGame-build --config Debug
+cmake --build PongGame-build --config Release
 cmake --install PongGame-build
