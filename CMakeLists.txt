@@ -118,6 +118,7 @@ target_link_options(${PROJECT_NAME}
     "/DEBUG:FULL"
     "/ASSEMBLYDEBUG"
 )
+add_subdirectory(src)
 
 # Install library, extension file, and support files in ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}
 set(INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/")
