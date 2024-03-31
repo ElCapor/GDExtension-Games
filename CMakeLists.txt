@@ -88,7 +88,35 @@ include( CompilerWarnings )
 # Create and include version info file from git
 include( GitVersionInfo )
 
-add_subdirectory( src )
+file(GLOB_RECURSE project_sources
+    CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.[hc]pp"
+)
+
+target_sources( ${PROJECT_NAME}
+    PRIVATE
+        ${project_sources}
+)
+
+target_include_directories( ${PROJECT_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+
+target_compile_options(${PROJECT_NAME}
+    PRIVATE
+        "/wd4244" # conversion to real_t whatever shit
+        "/MD" # multithread
+        "/Zi" # debug database
+)
+
+# Link with debug symbols in order to debug easily
+target_link_options(${PROJECT_NAME}
+    PRIVATE
+        "/DEBUG:FULL"
+        "/ASSEMBLYDEBUG"
+)
 
 # Install library, extension file, and support files in ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}
 set( INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/" )
