@@ -1,4 +1,4 @@
-# Fork Note :
+# Fork Note : there are 3 branches , each one of them has a game
 ## This is an example Pong Game i made using this gdnative template. To build it you can just do the following lines:
 ```
 // if you want to just get the binaries
